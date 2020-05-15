@@ -1,0 +1,142 @@
+type: edu
+custom_name: stage5
+files:
+- name: test/EncryptDecryptTest.java
+  visible: false
+  text: |
+    import encryptdecrypt.Main;
+    import org.hyperskill.hstest.v6.common.FileUtils;
+    import org.hyperskill.hstest.v6.stage.BaseStageTest;
+    import org.hyperskill.hstest.v6.testcase.CheckResult;
+    import org.hyperskill.hstest.v6.testcase.TestCase;
+
+    import java.io.IOException;
+    import java.nio.charset.StandardCharsets;
+    import java.nio.file.Files;
+    import java.nio.file.NoSuchFileException;
+    import java.nio.file.Path;
+    import java.nio.file.Paths;
+    import java.util.List;
+
+    public class EncryptDecryptTest extends BaseStageTest<String> {
+        public EncryptDecryptTest() {
+            super(Main.class);
+        }
+
+        @Override
+        public List<TestCase<String>> generate() {
+            return List.of(
+                new TestCase<String>()
+                    .addArguments(
+                        "-mode", "enc",
+                        "-key", "5",
+                        "-in", "in.txt",
+                        "-out", "output.txt"
+                    )
+                    .setAttach("\\jqhtrj%yt%m~ujwxpnqq&")
+                    .addFile("in.txt", "Welcome to hyperskill!"),
+
+                new TestCase<String>()
+                    .addArguments(
+                        "-key", "0",
+                        "-mode", "enc",
+                        "-in", "input.txt",
+                        "-out", "output.txt"
+                    )
+                    .setAttach("Hello")
+                    .addFile("input.txt", "Hello"),
+
+                new TestCase<String>()
+                    .addArguments(
+                        "-key", "1",
+                        "-in", "i.txt",
+                        "-out", "output.txt",
+                        "-mode", "enc"
+                    )
+                    .setAttach("123456789")
+                    .addFile("i.txt", "012345678"),
+
+                new TestCase<String>()
+                    .addArguments(
+                        "-mode", "dec",
+                        "-in", "input.txt",
+                        "-out", "output.txt",
+                        "-key", "5"
+                    )
+                    .setAttach("Welcome to hyperskill!")
+                    .addFile("input.txt", "\\jqhtrj%yt%m~ujwxpnqq&"),
+
+                new TestCase<String>()
+                    .addArguments(
+                        "-mode", "dec",
+                        "-key", "0",
+                        "-in", "input.txt",
+                        "-out", "output.txt"
+                    )
+                    .setAttach("Hi")
+                    .addFile("input.txt", "Hi"),
+
+                new TestCase<String>()
+                    .addArguments(
+                        "-mode", "dec",
+                        "-key", "1",
+                        "-in", "input.txt",
+                        "-out", "output.txt"
+                    )
+                    .setAttach("111122223333")
+                    .addFile("input.txt", "222233334444")
+            );
+        }
+
+        @Override
+        public CheckResult check(String reply, String clue) {
+            String fileName = "output.txt";
+            String output;
+
+            try {
+                Path path = Paths.get(FileUtils.CURRENT_DIR + fileName);
+                output = Files.readString(path, StandardCharsets.UTF_8);
+            } catch (NoSuchFileException e) {
+                return new CheckResult(false, "File output.txt not found!");
+            } catch (IOException e) {
+                return new CheckResult(false, "Cannot read from file!");
+            }
+
+            if (!output.trim().equals(clue.trim())) {
+                return new CheckResult(false, "Wrong result in the file!");
+            }
+
+            return new CheckResult(true);
+        }
+    }
+  learner_created: false
+- name: src/encryptdecrypt/Main.java
+  visible: true
+  text: "package encryptdecrypt;\n\nimport java.util.Scanner;\n\npublic class Main\
+    \ {\n    public static void main(String[] args) {\n        String op = \"enc\"\
+    ;\n        int key = 0;\n        String input = \"\";\n\n        for(int i = 0;\
+    \ i < args.length; i++){\n            switch(args[i]){\n                case \"\
+    -mode\":\n                    i++;\n                    op = args[i];\n      \
+    \              break;\n                case \"-key\":;\n                    i++;\n\
+    \                    key = Integer.parseInt(args[i]);\n                    break;\n\
+    \                case \"-data\":\n                    i++;\n                 \
+    \   input = args[i];\n                    break;\n            }\n        }\n \
+    \       char[] outputChars = {};\n\n        if(op.equals(\"dec\")){\n        \
+    \    outputChars = dec(input, key);\n        } else {\n            outputChars\
+    \ = enc(input, key);\n        }\n\n        System.out.print(outputChars);\n  \
+    \  }\n\n    public static char[] enc(String input, int key){\n        char[] inputChars\
+    \ = input.toCharArray();\n        \n        for(int i = 0; i < input.length();\
+    \ i++){\n            if(inputChars[i] > 31 && inputChars[i] < 127){\n        \
+    \        int temp = (int)inputChars[i] - 32;\n                temp += key;\n \
+    \               temp = temp % 95;\n                inputChars[i] = (char)(temp\
+    \ + 32);\n            }\n        }\n\n        return inputChars;\n    }\n\n  \
+    \  public static char[] dec(String input, int key){\n        char[] inputChars\
+    \ = input.toCharArray();\n        \n        for(int i = 0; i < input.length();\
+    \ i++){\n            if(inputChars[i] > 31 && inputChars[i] < 127){\n        \
+    \        int temp = (int)inputChars[i] - 32;\n                temp -= key;\n \
+    \               temp = temp % 95;\n                inputChars[i] = (char)(temp\
+    \ + 32);\n            }\n        }\n\n\n        return inputChars;\n    }\n}\n"
+  learner_created: false
+feedback_link: https://hyperskill.org/projects/46/stages/249/implement
+status: Solved
+record: 1
